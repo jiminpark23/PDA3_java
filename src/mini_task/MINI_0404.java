@@ -34,7 +34,6 @@ public class MINI_0404 {
 class Person {
     // 필드
     String name;
-    String lines;
 
     // 생성자
     Person(String name) {
