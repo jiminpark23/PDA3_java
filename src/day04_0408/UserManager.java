@@ -6,6 +6,7 @@ import java.util.Scanner;
 public class UserManager {
     private static UserDAO userDao = new UserDAO();
     private static Scanner scanner = new Scanner(System.in);
+    private static String loggedInUserId = null;
 
     public static void main(String[] args) {
         while (true) {
@@ -58,27 +59,35 @@ public class UserManager {
         String password = scanner.nextLine();
 
         boolean loginSuccess = userDao.login(id, password);
-        if (!loginSuccess) {
+        if (loginSuccess) {
+            loggedInUserId = id; // 로그인 성공한 사용자의 아이디를 저장
+        } else {
             System.out.println("로그인 실패");
         }
     }
 
     private static void updateUserInfo() {
-        // TODO: 변경할 사용자 아이디 받는 게 아니라 현재 로그인 상태인 유저의 id를 확인해서 바꾸도록
-        System.out.print("변경할 사용자의 아이디: ");
-        String id = scanner.nextLine();
+        // 로그인 상태가 아닌 경우, 수정할 수 없음
+        if (loggedInUserId == null) {
+            System.out.println("로그인 상태가 아닙니다.");
+            return;
+        }
+
         System.out.print("새 비밀번호: ");
         String newPassword = scanner.nextLine();
         System.out.print("새 이름: ");
         String newName = scanner.nextLine();
 
-        userDao.updateUserInfo(id, newPassword, newName);
+        userDao.updateUserInfo(loggedInUserId, newPassword, newName);
     }
 
     private static void deleteUser() {
-        System.out.print("탈퇴할 사용자의 아이디: ");
-        String id = scanner.nextLine();
+        // 로그인 상태가 아닌 경우, 수정할 수 없음
+        if (loggedInUserId == null) {
+            System.out.println("로그인 상태가 아닙니다.");
+            return;
+        }
 
-        userDao.deleteUser(id);
+        userDao.deleteUser(loggedInUserId);
     }
 }
